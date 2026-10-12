@@ -33,7 +33,13 @@ uninstall_linux() {
 
 uninstall_macos() {
     unlink_if "$BIN_DIR/jarbas-cli" "*/$MAC_APP/*"
-    rm -rf "/Applications/$MAC_APP" "$HOME/Applications/$MAC_APP"
+    # Unregister first so Spotlight and Launchpad drop it straight away.
+    lsregister=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+    for app in "/Applications/$MAC_APP" "$HOME/Applications/$MAC_APP"; do
+        [ -d "$app" ] || continue
+        [ -x "$lsregister" ] && "$lsregister" -u "$app" >/dev/null 2>&1 || true
+        rm -rf "$app"
+    done
 }
 
 main() {

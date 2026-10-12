@@ -217,6 +217,15 @@ mac_app_dir() {
     if [ -w /Applications ]; then echo /Applications; else echo "$HOME/Applications"; fi
 }
 
+# The bundle was staged under a hidden name, which Spotlight skips, and macOS
+# only registers an app on its first launch. Register and index it now so it
+# shows up in Spotlight and Launchpad straight away. Best effort.
+register_mac_app() {
+    lsregister=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+    [ -x "$lsregister" ] && "$lsregister" -f "$1" >/dev/null 2>&1 || true
+    command -v mdimport >/dev/null 2>&1 && mdimport "$1" >/dev/null 2>&1 || true
+}
+
 install_macos() {
     need hdiutil
     need ditto
@@ -241,6 +250,7 @@ install_macos() {
     MOUNT=""
     rm -rf "$apps/$MAC_APP"
     mv "$apps/.$MAC_APP.new" "$apps/$MAC_APP"
+    register_mac_app "$apps/$MAC_APP"
 
     cli="$apps/$MAC_APP/Contents/MacOS/jarbas-cli"
     if [ -x "$cli" ]; then
