@@ -220,8 +220,13 @@ install_macos() {
 
     MOUNT="$TMP/mount"
     mkdir "$MOUNT"
-    hdiutil attach -nobrowse -readonly -noautoopen -mountpoint "$MOUNT" "$TMP/jarbas-app.dmg" >/dev/null ||
-        die "could not open the disk image"
+    # Newer macOS deprecates `hdiutil attach` in favour of `diskutil image`;
+    # older releases only have hdiutil.
+    if diskutil image attach --help >/dev/null 2>&1; then
+        diskutil image attach --readOnly --nobrowse --mountPoint "$MOUNT" "$TMP/jarbas-app.dmg" >/dev/null
+    else
+        hdiutil attach -nobrowse -readonly -noautoopen -mountpoint "$MOUNT" "$TMP/jarbas-app.dmg" >/dev/null
+    fi || die "could not open the disk image"
     [ -d "$MOUNT/$MAC_APP" ] || die "the disk image holds no $MAC_APP"
 
     apps="$(mac_app_dir)"
