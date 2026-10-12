@@ -25,6 +25,10 @@ ICON_FILE="$DATA_HOME/icons/hicolor/scalable/apps/jarbas-app.svg"
 MAC_APP="Jarbas.app"
 
 say() { printf '%s\n' "$*"; }
+# Success lines are green when stdout is a terminal and NO_COLOR is unset.
+ok() {
+    if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then printf '\033[32m%s\033[0m\n' "$*"; else say "$*"; fi
+}
 die() { printf 'error: %s\n' "$*" >&2; exit 1; }
 need() { command -v "$1" >/dev/null 2>&1 || die "$1 is required but was not found"; }
 
@@ -191,8 +195,8 @@ EOF
 
     prune_versions "$dir"
 
-    say "Installed jarbas-app $VERSION in $LINUX_HOME/versions/$dir"
-    say "Start it from your application menu, or run jarbas-app."
+    ok "Installed jarbas-app $VERSION in $LINUX_HOME/versions/$dir"
+    ok "Start it from your application menu, or run jarbas-app."
     path_hint
     if [ -f /opt/jarbas-app/packaged-by ]; then
         say "note: the Arch package is installed too; remove it with 'sudo pacman -R jarbas-app' to keep one copy."
@@ -244,8 +248,8 @@ install_macos() {
         link "$cli" "$BIN_DIR/jarbas-cli"
     fi
 
-    say "Installed jarbas-app $VERSION in $apps/$MAC_APP"
-    say "Start it from Launchpad or Spotlight."
+    ok "Installed jarbas-app $VERSION in $apps/$MAC_APP"
+    ok "Start it from Launchpad or Spotlight."
     [ -x "$cli" ] && path_hint
     return 0
 }

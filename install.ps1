@@ -86,8 +86,8 @@ function Install-JarbasApp {
     $link.Description = 'Jarbas'
     $link.Save()
 
-    Write-Host "Installed jarbas-app $version in $installDir"
-    Write-Host 'Start it from the Start menu: Jarbas.'
+    Write-Host "Installed jarbas-app $version in $installDir" -ForegroundColor Green
+    Write-Host 'Start it from the Start menu: Jarbas.' -ForegroundColor Green
 }
 
 # Errors are thrown, never `exit`, so a window that ran `irm | iex` stays open.
