@@ -42,7 +42,13 @@ main() {
         Darwin) uninstall_macos ;;
         *) printf 'error: unsupported operating system %s; on Windows use uninstall.ps1\n' "$(uname -s)" >&2; exit 1 ;;
     esac
-    printf '%s\n' "Removed jarbas-app. Your settings and profiles are kept."
+    msg="Removed jarbas-app. Your settings and profiles are kept."
+    # Green when stdout is a terminal and NO_COLOR is unset, as in install.sh.
+    if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+        printf '\033[32m%s\033[0m\n' "$msg"
+    else
+        printf '%s\n' "$msg"
+    fi
 }
 
 main "$@"

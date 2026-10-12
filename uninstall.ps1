@@ -15,7 +15,7 @@ function Uninstall-JarbasApp {
     }
     Remove-Item -LiteralPath $shortcut -Force -ErrorAction SilentlyContinue
     if (Test-Path -LiteralPath $installDir) { Remove-Item -LiteralPath $installDir -Recurse -Force }
-    Write-Host 'Removed jarbas-app. Your settings and profiles are kept.'
+    Write-Host 'Removed jarbas-app. Your settings and profiles are kept.' -ForegroundColor Green
 }
 
 # Errors are thrown, never `exit`, so a window that ran `irm | iex` stays open.
